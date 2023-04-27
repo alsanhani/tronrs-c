@@ -1,0 +1,149 @@
+
+
+يوسف علي محمد السنحاني                                          رقم القيد 20 _3048     CS-3
+ 
+1- Create [OR Replace ] type id{argument};
+case Tag.CREATE:
+                        {
+                            Stmt st1, st2;
+                            match(Tag.CREATE);
+                            if (look.tag == Tag.OR)
+                            {
+                                match(Tag.OR);
+                                match(Tag.REPLACE);
+                            }
+                            Token t0 = look;
+                            match(Tag.BASIC);
+                            Token t1 = look;
+                            match(Tag.ID);
+                            Id id0 = top.get(t1);
+                            if (id0 == null) { error(t0.toString() + " undeclared "); }
+                            top.put(t1,id0);
+                            match('{');
+
+               
+
+                            while (look.tag == Tag.ID || look.tag == Tag.BASIC || look.tag==',')
+                            {
+
+                                 Token t=look;
+	                        match(Tag.ID);
+	                        Id i=top.get(t);
+	                        if(i==null){error(t.massage())+" Undeclared"}
+                                
+                            }
+
+	                       match('}');
+	                     match(';');
+	
+                              }
+stmt: 
+	| CREATE FUNCTION ID LEFT_PARENTHESIS argumnet RIGHT_PARENTHESIS SIMICOLON;;
+	| CREATE OR REPLACE FUNCTION ID LEFT_PRACKET argumnet RIGHT_PRACKET SIMICOLON;
+;
+
+
+********************************************************************************************************
+
+
+
+ case Tag.COUT:
+   {
+      match(Tag.COUT);
+      match('<');
+      match('<');
+      x=expr();
+      match(';');
+      return new cout(x);
+   } 
+
+stmt:  
+       
+     | COUT LE LE exp SIMICOLON;
+
+  
+     exp:term  
+
+                       { printf("found term\n"); } 
+      |exp PLUS term   { printf("found exp_plus_term \n"); }
+      |exp MINUS term  { printf("found exp_minus_term \n"); };
+*********************************************************************************************************
+
+
+
+4- CASE expr ([WHEN expr THEN stmt])+ [{ELSE stmt}|E]
+END
+ case Tag.Case:
+ {
+ Stmt s1 = null;
+ match(Tag.Case);
+x1 = expr();
+match('(');
+ do
+ {
+ match(Tag.When); 
+x2 = expr();
+ match(Tag.THEN);
+s = stmt();
+ match(')');
+ s = new When(x2, s);
+ }
+ while (look.tag == Tag.When);
+
+ if(look.tag==Tag.ELSE)
+ {
+ match(Tag.ELSE);
+ss = stmt();
+ s1 = new Else(ss);
+ }
+ match(Tag.END);
+ return new Case(x1, st);
+
+
+
+
+stmt:
+	
+|CASE exp LEFT_PARENTHESIS WHEN exp THEN stmt RIGHT_PARENTHESIS whenlist END
+|CASE exp  LEFT_PARENTHESIS WHEN exp THEN stmt RIGHT_PARENTHESIS whenlist ELSE stmt END
+;
+whenlist :
+|
+WHEN expr THEN stmt
+
+*******************************************************************************************************
+               
+
+
+
+
+2- //Round(id,expr);
+
+	case Tag.round:{
+	Expr x;
+	match(Tag.round);
+	match('(');
+	
+	Token tok = look;
+	match(Tag.ID);
+	Id id = top.get(tok);
+	if(id==null){
+	 error("id was not declared" + tok.toString());
+	 match(',');
+	 x=expr();
+	match(')');
+	match(';');
+	
+	return new round(id,expr);
+	}
+
+//Round(id,expr);
+
+stmt : 
+	|DECLARE BEGIN stmt END SIMICOLON
+	|DECLARE ID BASIC BEGIN stmt END SIMICOLON
+	|DECLARE ID BASIC COLON EQU expr BEGIN stmt END SIMICOLON
+	|ROUND LEFT_PARANTHESIS ID COMMA expr RIGHT_PARANTHESIS SIMICOLON
+********************************************************************************************************
+
+
